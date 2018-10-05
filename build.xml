@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<project default="package" name="redis-4.0.10" basedir=".">
+    <!-- 工程目录结构
+    project
+        |-bin
+        |-src
+        |-lib
+        |-out
+        |-build.xml
+    -->
+	<property name="project.name" value="redis-4.0.10"/>
+    <property name="bin.dir" value="bin"/>
+    <property name="conf.dir" value="conf"/>
+	<property name="log.dir" value="log"/>
+	<property name="output.dir" value="redis-4.0.10-centos6.3.x86_64"/>
+	<property name="platform" value="centos6.3.x86_64"/>
+
+    <!-- 1. 初始化工作，如创建目录等 -->
+    <target name="init">
+    	<delete dir="${output.dir}"/>
+        <mkdir dir="${output.dir}"/>
+    </target>
+
+    <!-- 3. 打包jar文件 -->
+    <target name="copy" depends="init">
+		<copy todir="${output.dir}/bin">
+    	    <fileset dir="${bin.dir}"/>
+    	</copy>
+        <copy todir="${output.dir}/etc">
+            <fileset dir="${conf.dir}"/>
+        </copy>
+		<copy todir="${output.dir}/log">
+    	    <fileset dir="${log.dir}"/>
+    	</copy>
+    </target>
+	
+	<target name="package" depends="copy">
+		<tar destfile="${project.name}-${platform}.tar">
+			<tarfileset dir="." includes="${output.dir}/**/*" filemode="777"></tarfileset>
+		</tar>
+		<delete includeemptydirs="true" file="${project.name}-${platform}.tar.gz"></delete>
+		<gzip destfile="${project.name}-${platform}.tar.gz" src="${project.name}-${platform}.tar"/>
+		<delete includeemptydirs="true" file="${project.name}-${platform}.tar"></delete>
+		<delete includeemptydirs="true" dir="${output.dir}"></delete>
+	</target>
+</project>
